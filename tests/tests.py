@@ -64,5 +64,6 @@ class TestDataSource(unittest.TestCase):
     def test_macd(self):
         tk = ticker.TickerWatched("SBIN.NS")
         macd = tk.get_macd()
+        macd.to_csv('/stockkit/data/yahoo/SBINS.macd.csv')
         macd.plot()
         plt.show()

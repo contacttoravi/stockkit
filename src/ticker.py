@@ -116,7 +116,6 @@ class TickerWatched(object):
         exit_price = float(price) - (float(price) * int(config[strategy]["max_loss_percent"]) / 100)
         return sell_price, exit_price
         """
-        # TODO: TBD
         pass
 
     def calculate_decisions(self, strategy, addons=(), target_csv_path=None):
@@ -136,7 +135,6 @@ class TickerWatched(object):
         result_prices = []
 
         for index, row in self.prices.iterrows():
-            # TODO: TBD
             curr_date, curr_price = row['Date'], row['Close']
 
             result_dates.append(curr_date)

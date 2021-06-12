@@ -49,6 +49,7 @@ class YahooFinance(DataSource):
         self.source = "online"
         self.downloaded_data.fillna(method='ffill', inplace=True)
         self._write_to_file()
+        self._read_from_file()  # Need to explicitly read file to add 'Date' is a column in DataFrame
         return self.downloaded_data
 
     def _validate_downloaded_data(self):
