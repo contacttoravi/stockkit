@@ -3,9 +3,13 @@
 """
 
 import unittest
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/src/')
+
 import datasource
 import ticker
-import os
 from general import config
 import matplotlib.pyplot as plt
 
@@ -46,20 +50,30 @@ class TestDataSource(unittest.TestCase):
         ds = datasource.create('google')
         self.assertEqual('google', ds.name)
 
+
+class TestPurchased(unittest.TestCase):
+    def setUp(self):
+        pass
+
     def test_ticker_purchased_1(self):
         # Short term strategy
-        tk = ticker.TickerPurchased("SBIN.NS", "2020/06/01")
+        tk = ticker.TickerPurchased("SBIN.NS", "2021/05/01")
         tk.calculate_decisions('shortterm', target_csv_path='/stockkit/data/yahoo/SBIIN.NS.st.csv')
 
     def test_ticker_purchased_2(self):
         # Mid term strategy
-        tk = ticker.TickerPurchased("SBIN.NS", "2020/06/01")
+        tk = ticker.TickerPurchased("SBIN.NS", "2021/05/01")
         tk.calculate_decisions('midterm', target_csv_path='/stockkit/data/yahoo/SBIIN.NS.mt.csv')
 
     def test_ticker_purchased_3(self):
         # Long term strategy
-        tk = ticker.TickerPurchased("SBIN.NS", "2020/06/01")
+        tk = ticker.TickerPurchased("SBIN.NS", "2021/05/01")
         tk.calculate_decisions('longterm', target_csv_path='/stockkit/data/yahoo/SBIIN.NS.lt.csv')
+
+
+class TestWatcher(unittest.TestCase):
+    def setUp(self):
+        pass
 
     def test_macd(self):
         tk = ticker.TickerWatched("SBIN.NS")
@@ -67,3 +81,19 @@ class TestDataSource(unittest.TestCase):
         macd.to_csv('/stockkit/data/yahoo/SBINS.macd.csv')
         macd.plot()
         plt.show()
+
+
+test_cases = (TestDataSource, TestPurchased, TestWatcher)
+
+
+def load_tests(loader, tests, pattern):
+    suite = unittest.TestSuite()
+    for test_class in test_cases:
+        tests = loader.loadTestsFromTestCase(test_class)
+        suite.addTests(tests)
+    return suite
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(failfast=True, verbosity=2)
+    runner.run(load_tests(unittest.TestLoader(), None, None))

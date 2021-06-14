@@ -6,7 +6,7 @@ from os import path
 import time
 
 config = None
-last_fallback_path = path.dirname(path.dirname(__file__)) + '/config/appconfig.ini'
+last_fallback_path = path.dirname(path.dirname(path.realpath(__file__))) + '/config/appconfig.ini'
 
 
 def get_config():
