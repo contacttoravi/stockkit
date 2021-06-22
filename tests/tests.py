@@ -82,6 +82,29 @@ class TestWatcher(unittest.TestCase):
         macd.plot()
         plt.show()
 
+    def test_macd_pyplot(self):
+        tk = ticker.TickerWatched("SBIN.NS")
+        macd = tk.get_macd()
+        macd.to_csv('/stockkit/data/yahoo/SBINS.macd.csv')
+
+        fig, ax = plt.subplots(1)
+        ax.plot(macd.Date, macd.macd, lw=2, label='macd', color='blue')
+        ax.plot(macd.Date, macd.signal, lw=2, label='signal', color='red')
+        fig.autofmt_xdate()
+        ax.grid(True)
+        ax.legend(loc='upper left')
+
+        # Limit number of x labels to make it readable
+        max_labels = 25
+        xtickspace = int(len(macd.Date) / max_labels)
+        if xtickspace > 0:
+            for index, xlabel in zip(range(len(macd.Date)), ax.get_xticklabels()):
+                if index % xtickspace == 0:
+                    xlabel.set_visible(True)
+                else:
+                    xlabel.set_visible(False)
+        plt.show()
+
 
 test_cases = (TestDataSource, TestPurchased, TestWatcher)
 
