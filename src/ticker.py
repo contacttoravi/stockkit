@@ -51,7 +51,7 @@ class TickerPurchased(object):
         watch_financial_report, watch_news, etc
         :return: pandas.DataFrame time-series
         """
-        print("Evaluating decisions")
+        print("Evaluating decisions for '{}'".format(self.ticker))
         start_price = exit_price = sell_price = None
         curr_decision = None
         exit_found = False
@@ -95,6 +95,22 @@ class TickerPurchased(object):
             self.decisions.to_csv(target_csv_path)
         print("Completed evaluating decisions")
         return self.decisions
+
+    def get_decisions_summary(self, strategy, addons=(), target_csv_path=None, return_type='json'):
+        full_decisions = self.calculate_decisions(strategy=strategy, addons=addons).copy(deep=True)
+        index_tobe_deleted = []
+        old_decision = None
+        for index, row in full_decisions.iterrows():
+            if row['Decision'] != old_decision:
+                old_decision = row['Decision']
+            else:
+                index_tobe_deleted.append(index)
+        summary_decisions = full_decisions.drop(index_tobe_deleted)
+
+        if return_type == 'DataFrame':
+            return summary_decisions
+        else:
+            return summary_decisions.to_json(orient="records")
 
 
 class TickerWatched(object):
