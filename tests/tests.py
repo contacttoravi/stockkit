@@ -5,6 +5,7 @@
 import unittest
 import os
 import sys
+import json
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/src/')
 
@@ -69,6 +70,13 @@ class TestPurchased(unittest.TestCase):
         # Long term strategy
         tk = ticker.TickerPurchased("SBIN.NS", "2021/05/01")
         tk.calculate_decisions('longterm', target_csv_path='/stockkit/data/yahoo/SBIIN.NS.lt.csv')
+
+    def test_ticker_decision_summary(self):
+        # Mid term strategy
+        tk = ticker.TickerPurchased("SBIN.NS", "2020/02/01")
+        summary = json.loads(tk.get_decisions_summary('midterm'))
+        self.assertGreater(len(summary), 0)
+        print((summary[0], summary[-1]))
 
 
 class TestWatcher(unittest.TestCase):

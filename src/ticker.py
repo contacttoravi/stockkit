@@ -21,9 +21,12 @@ class TickerPurchased(object):
         """
         self.ticker = ticker_name
         self.start_date = start_date
+        self.data_available_for = int(config['datasource']['data_available_for'])
+
         self._validate_start_date()
+        period = "{}y".format(int(self.data_available_for/367) + 1)
         ds = datasource.create()
-        self.prices = ds.get_historic_prices(self.ticker)
+        self.prices = ds.get_historic_prices(self.ticker, period=period)
         self.decisions = pd.DataFrame()
 
     def _validate_start_date(self):
@@ -32,8 +35,8 @@ class TickerPurchased(object):
         if date_start > date_today:
             raise Exception("start_date {} cannot be greater than today".format(self.start_date))
         date_diff = (date_today - date_start).days
-        if date_diff >= 365:
-            raise Exception("start_date is older than 365 days")
+        if date_diff >= self.data_available_for:
+            raise Exception("start_date is older than {} days".format(self.data_available_for))
 
     @staticmethod
     def calculate_strategic_prices(price, strategy):
@@ -53,11 +56,11 @@ class TickerPurchased(object):
         """
         print("Evaluating decisions for '{}'".format(self.ticker))
         start_price = exit_price = sell_price = None
-        curr_decision = None
-        exit_found = False
+        curr_decision = sell_percent = None
         result_dates = []
         result_decisions = []
         result_prices = []
+        result_sell_percent = []
 
         for index, row in self.prices.iterrows():
             curr_date, curr_price = row['Date'], row['Close']
@@ -68,28 +71,31 @@ class TickerPurchased(object):
             if not start_price:
                 start_price = curr_price
                 sell_price, exit_price = self.calculate_strategic_prices(curr_price, strategy)
+                sell_percent = 0
                 print("enter(date, price) = ({},{})".format(curr_date, curr_price))
                 curr_decision = "enter"
-            elif exit_found:
-                curr_decision = "exit"
             elif float(curr_price) < exit_price:
                 curr_decision = "exit"
-                exit_found = True
+                sell_percent = 100
                 print("exit(date, price) = ({},{})".format(curr_date, curr_price))
             elif float(curr_price) > sell_price:
                 curr_decision = "sell"
                 print("sell(date, price) = ({},{})".format(curr_date, curr_price))
                 sell_price, exit_price = self.calculate_strategic_prices(curr_price, strategy)
+                sell_percent = int(config[strategy]['sell_percent'])
             else:
                 curr_decision = "hold"
+                sell_percent = 0
 
             result_dates.append(curr_date)
             result_prices.append("{:.2f}".format(curr_price))
             result_decisions.append(curr_decision)
+            result_sell_percent.append(sell_percent)
 
         self.decisions = pd.DataFrame({'Date': result_dates,
                                        'Close': result_prices,
-                                       'Decision': result_decisions})
+                                       'Decision': result_decisions,
+                                       'sell_percent': result_sell_percent})
 
         if target_csv_path:
             self.decisions.to_csv(target_csv_path)
@@ -99,12 +105,14 @@ class TickerPurchased(object):
     def get_decisions_summary(self, strategy, addons=(), target_csv_path=None, return_type='json'):
         full_decisions = self.calculate_decisions(strategy=strategy, addons=addons).copy(deep=True)
         index_tobe_deleted = []
+        last_element_index = full_decisions.index[-1]
         old_decision = None
         for index, row in full_decisions.iterrows():
             if row['Decision'] != old_decision:
                 old_decision = row['Decision']
             else:
-                index_tobe_deleted.append(index)
+                if index != last_element_index:
+                    index_tobe_deleted.append(index)
         summary_decisions = full_decisions.drop(index_tobe_deleted)
 
         if return_type == 'DataFrame':
