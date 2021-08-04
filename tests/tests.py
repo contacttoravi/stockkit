@@ -83,6 +83,12 @@ class TestWatcher(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_buy_decision_macd(self):
+        tk = ticker.TickerWatched("SBIN.NS")
+        print('short: {}'.format(tk.buy_decision_macd('shortterm')))
+        print('mid: {}'.format(tk.buy_decision_macd('midterm')))
+        print('long: {}'.format(tk.buy_decision_macd('longterm')))
+
     def test_macd(self):
         tk = ticker.TickerWatched("SBIN.NS")
         macd = tk.get_macd()

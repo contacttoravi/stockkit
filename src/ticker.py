@@ -128,7 +128,7 @@ class TickerWatched(object):
         """
         self.ticker = ticker_name
         ds = datasource.create()
-        self.prices = ds.get_historic_prices(self.ticker)
+        self.prices = ds.get_historic_prices(self.ticker, period='1y')
         if len(self.prices) < 10:
             raise Exception("Insufficient data to watch ticker {}".format(ticker_name))
         self.decisions = pd.DataFrame()
@@ -136,9 +136,6 @@ class TickerWatched(object):
     @staticmethod
     def calculate_strategic_prices(price, strategy):
         """
-        sell_price = float(price) + (float(price) * int(config[strategy]["claim_profit_percent"])/100)
-        exit_price = float(price) - (float(price) * int(config[strategy]["max_loss_percent"]) / 100)
-        return sell_price, exit_price
         """
         pass
 
@@ -189,3 +186,15 @@ class TickerWatched(object):
         cl_prices['signal'] = cl_prices['macd'].ewm(span=signal, min_periods=signal).mean()
         cl_prices.dropna(inplace=True)
         return cl_prices[['Date', 'macd', 'signal']].copy()
+
+    def buy_decision_macd(self, strategy):
+        strategy_days = {'shortterm': -3,
+                         'midterm': -5,
+                         'longterm': -7}.get(strategy, -5)
+        macd = self.get_macd()
+        macd['buy'] = macd.macd > macd.signal
+        last_decisions = list(macd.buy.iloc()[strategy_days:])
+        if False in last_decisions:
+            return False
+        else:
+            return True
