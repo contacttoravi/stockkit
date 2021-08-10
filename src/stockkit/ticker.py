@@ -1,8 +1,8 @@
 """
 @author: ravi
 """
-from general import config
-import datasource
+from stockkit.general import config
+from stockkit import datasource
 from datetime import datetime
 import pandas as pd
 

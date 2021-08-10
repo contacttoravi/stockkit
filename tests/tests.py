@@ -9,9 +9,8 @@ import json
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/src/')
 
-import datasource
-import ticker
-from general import config
+from stockkit import ticker, datasource
+from stockkit.general import config
 import matplotlib.pyplot as plt
 
 

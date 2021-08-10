@@ -4,7 +4,7 @@
 
 import yfinance
 from pandas import DataFrame, read_csv
-from general import config, Methods
+from stockkit.general import config, Methods
 from os import path, mkdir
 
 
