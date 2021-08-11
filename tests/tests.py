@@ -6,9 +6,6 @@ import unittest
 import os
 import sys
 import json
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + '/src/')
-
 from stockkit import ticker, datasource
 from stockkit.general import config
 import matplotlib.pyplot as plt
