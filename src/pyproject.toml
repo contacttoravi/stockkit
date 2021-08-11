@@ -1,8 +1,0 @@
-[build-system]
-requires = [
-    "configparser>=5.0.2",
-    "pandas>=1.2.4",
-    "requests>=2.25.1",
-    "yfinance>=0.1.59"
-]
-build-backend = "setuptools.build_meta"
