@@ -78,7 +78,7 @@ class YahooFinance(DataSource):
 def create(name=None):
     """
     Returns DataSource implementation object
-    :param name: If not provided, a default name from config is picked up
+    :param name: If not provided, a default name from data is picked up
     :return: DataSource implementation object
     """
     AVAILABLE_DATASOURCE = {'yahoo': YahooFinance, 'google': GoogleFinance}

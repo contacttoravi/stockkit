@@ -6,13 +6,12 @@ from os import path
 import time
 
 config = None
-last_fallback_path = path.dirname(path.dirname(path.realpath(__file__))) + '/config/appconfig.ini'
+last_fallback_path = path.dirname(path.dirname(path.realpath(__file__))) + '/appconfig.ini'
 
 
 def get_config():
     global config
-    config_paths = ['/etc/conf/stockit/appconfig.ini', '/stockit/conf/appconfig.ini',
-                    '../config/appconfig.ini', last_fallback_path]
+    config_paths = ['/etc/config/stockit/appconfig.ini', '/stockit/config/appconfig.ini', last_fallback_path]
     config = configparser.ConfigParser()
     config_file_found = False
     for file_path in config_paths:
