@@ -5,7 +5,7 @@
 import yfinance
 from pandas import DataFrame, read_csv
 from stockkit.general import config, Methods
-from os import path, mkdir
+from os import path, mkdir, makedirs
 
 
 class DataSource(object):
@@ -63,7 +63,7 @@ class YahooFinance(DataSource):
         base_path = config['datasource']['file_location'] + "/{}".format("yahoo")
         file_name = base_path + "/{}".format(self.ticker)
         if not path.isdir(base_path):
-            mkdir(base_path)
+            makedirs(base_path)
         self.downloaded_data.to_csv(file_name)
 
     def _read_from_file(self):

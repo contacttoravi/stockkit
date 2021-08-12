@@ -88,14 +88,14 @@ class TestWatcher(unittest.TestCase):
     def test_macd(self):
         tk = ticker.TickerWatched("SBIN.NS")
         macd = tk.get_macd()
-        macd.to_csv('/stockkit/data/yahoo/SBINS.macd.csv')
+        macd.to_csv('/tmp/stockkit/data/yahoo/SBINS.macd.csv')
         macd.plot()
         plt.show()
 
     def test_macd_pyplot(self):
         tk = ticker.TickerWatched("SBIN.NS")
         macd = tk.get_macd()
-        macd.to_csv('/stockkit/data/yahoo/SBINS.macd.csv')
+        macd.to_csv('/tmp/stockkit/data/yahoo/SBINS.macd.csv')
 
         fig, ax = plt.subplots(1)
         ax.plot(macd.Date, macd.macd, lw=2, label='macd', color='blue')
